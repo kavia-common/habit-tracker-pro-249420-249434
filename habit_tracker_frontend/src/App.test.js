@@ -112,14 +112,16 @@ describe("Retro Habit Tracker - core behavior", () => {
   });
 
   test("toggle completion for today: updates status/streaks and persists to localStorage", async () => {
-    const user = userEvent.setup();
-
     // Fix time so that "todayKey" is deterministic (local date key derived from Date()).
     // Using midday avoids potential DST edge cases across environments.
     jest.useFakeTimers();
     jest.setSystemTime(new Date("2024-06-15T12:00:00.000Z"));
 
     try {
+      // user-event relies on timers for realistic interactions; with Jest fake timers enabled,
+      // it must be configured to advance timers or it can hang and hit the test timeout.
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+
       setPersistedHabits([
         makeHabit({
           id: "h_1",
