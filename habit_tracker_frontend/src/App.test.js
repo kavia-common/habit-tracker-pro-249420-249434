@@ -145,7 +145,8 @@ describe("Retro Habit Tracker - core behavior", () => {
       // There are two stat boxes with values; we assert current=1 and best=1
       expect(within(stats).getByText("Current")).toBeInTheDocument();
       expect(within(stats).getByText("Best")).toBeInTheDocument();
-      expect(within(stats).getByText("1")).toBeInTheDocument();
+      // Both Current and Best show "1" here; ensure we match both values unambiguously.
+      expect(within(stats).getAllByText("1")).toHaveLength(2);
 
       // Toggle today on
       await user.click(within(card).getByRole("button", { name: /check in \(today\)/i }));
@@ -155,7 +156,7 @@ describe("Retro Habit Tracker - core behavior", () => {
 
       // After toggle: current should now be 2 (yesterday + today), best should be 2.
       // Since the UI renders both stats as plain numbers, we check that a "2" appears.
-      expect(within(stats).getByText("2")).toBeInTheDocument();
+      expect(within(stats).getAllByText("2")).toHaveLength(2);
 
       // Persisted state should include today's completion key
       const lastCall = setItemSpy.mock.calls[setItemSpy.mock.calls.length - 1];
